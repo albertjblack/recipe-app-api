@@ -9,6 +9,7 @@ ENV PYTHONUNBUFFERED 1
 
 # cop y from local to out docker image
 COPY ./requirements.txt /tmp/requirements.txt
+COPY ./requirements.dev.txt /tmp/requirements.dev.txt
 COPY ./app /app
 
 # default directory that commands will run from .. location where dajngo project will be synced to
@@ -17,6 +18,7 @@ WORKDIR /app
 # expose 8000 port of container running from our image
 EXPOSE 8000
 
+ARG ENV=false
 # install dependencies "&& \" breaks commands into multiple lines
 # create virtual environment for project so that base image dependencies do not conflict
 # adduser .. not to use root user .. limited user .. no password cuz we will logon by default .. no hom .. name of user
@@ -24,6 +26,9 @@ RUN python -m venv /py && \
     # 
     /py/bin/pip install --upgrade pip && \ 
     /py/bin/pip install -r /tmp/requirements.txt && \
+    if [ $DEV="true" ]; \
+    then /py/bin/pip install -r /tmp/requirements.dev.txt; \
+    fi && \
     rm -rf /tmp && \ 
     adduser \
     --disabled-password \ 

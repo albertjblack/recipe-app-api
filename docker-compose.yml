@@ -1,0 +1,21 @@
+# version of docker compose syntax used || basically docker builds with our specs
+version: '3.9'
+
+# services one or more
+services:
+  # name of our service
+  app:
+    # build docker file in current directory running docker compose from
+    build:
+      context: .
+      args:
+        - DEV=true
+    # port 8000 in local machine to port 8000 in docker container
+    ports:
+      - "8000:8000"
+    # mapping directories from our system into our container // no rebuild every change, but have it synced
+    volumes:
+      - ./app:/app
+    # command used to run the service // can be overwritten later when running commands // default
+    command: >
+      sh -c "python manage.py runserver 0.0.0.0:8000"
