@@ -19,3 +19,28 @@ services:
     # command used to run the service // can be overwritten later when running commands // default
     command: >
       sh -c "python manage.py runserver 0.0.0.0:8000"
+    # we can use the service name as our value
+    environment:
+      - DB_HOST=db
+      - DB_NAME=devdb
+      - DB_USER=devuser
+      - DB_PASSWORD=changeme
+    # wait for service to start
+    depends_on:
+      - db
+
+  # name of db service
+  db:
+    image: postgres:13-alpine
+    volumes:
+      - dev-db-data:/var/lib/postgresql/data
+    # set 3 env vars to set the initial database config for database .. details for local development
+    # if on production you should not hardcode things
+    environment:
+      - POSTGRES_DB=devdb
+      - POSTGRES_USER=devuser
+      - POSTGRES_PASSWORD=changeme
+
+volumes:
+  # handled automatically by docker compose
+  dev-db-data:
